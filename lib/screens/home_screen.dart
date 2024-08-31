@@ -1,4 +1,5 @@
 import 'package:doodle/screens/create_room_screen.dart';
+import 'package:doodle/screens/join_room_screen.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -58,7 +59,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => const JoinRoomScreen(),
+                    ),
+                  );
+                },
                 style: ButtonStyle(
                   backgroundColor: WidgetStateProperty.all(Colors.blue),
                   textStyle: WidgetStateProperty.all(

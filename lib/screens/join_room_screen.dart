@@ -12,19 +12,7 @@ class _JoinRoomScreenState extends State<JoinRoomScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _roomNameController = TextEditingController();
 
-  void joinRoom() {
-    if (_nameController.text.isNotEmpty &&
-        _roomNameController.text.isNotEmpty) {
-      Map<String, String> data = {
-        "nickname": _nameController.text,
-        "name": _roomNameController.text
-      };
-
-      Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) =>
-              PaintScreen(data: data, screenFrom: 'joinRoom')));
-    }
-  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +45,7 @@ class _JoinRoomScreenState extends State<JoinRoomScreen> {
           ),
           const SizedBox(height: 40),
           ElevatedButton(
-            onPressed: joinRoom,
+            onPressed: (){},
             style: ButtonStyle(
               backgroundColor: const WidgetStatePropertyAll(
                 Colors.blue,
