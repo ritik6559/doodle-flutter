@@ -1,5 +1,4 @@
 import 'package:doodle/screens/home_screen.dart';
-import 'package:doodle/screens/paint_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
