@@ -18,6 +18,6 @@ mongodb.connect(DB).then(() =>{
     console.log(e);
 })
 
-app.listen(PORT, '0.0.0.0',() => {
+server.listen(PORT, '0.0.0.0',() => {
     console.log(`server connected at ${PORT}`);
 })

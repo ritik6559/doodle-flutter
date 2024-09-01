@@ -1,3 +1,4 @@
+import 'package:doodle/screens/paint_screen.dart';
 import 'package:doodle/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 
@@ -11,8 +12,6 @@ class JoinRoomScreen extends StatefulWidget {
 class _JoinRoomScreenState extends State<JoinRoomScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _roomNameController = TextEditingController();
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +44,13 @@ class _JoinRoomScreenState extends State<JoinRoomScreen> {
           ),
           const SizedBox(height: 40),
           ElevatedButton(
-            onPressed: (){},
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const PaintScreen(),
+                ),
+              );
+            },
             style: ButtonStyle(
               backgroundColor: const WidgetStatePropertyAll(
                 Colors.blue,
