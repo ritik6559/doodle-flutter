@@ -5,6 +5,8 @@ const PORT = process.env.PORT || 3000;
 const app = express();
 const server = http.createServer(app);
 var io = require('socket.io')(server);
+const Room = require('./models/room');
+const getWord = require('./api/getWord');
 
 //middleware
 app.use(express.json());
@@ -22,7 +24,27 @@ io.on('connection',(socket) => {
     console.log("connected");
     socket.on('create-game',async({nickname, name, occupancy, maxRounds}) => {
         try{
+            const existingRoom = await Room.findOne({name});
+            if(existingRoom){
+                socket.emit('notCorrectGame', 'Room with that name already exists!');
+            }
+            let room = new Room();
+            const word = getWord();
+            room.word = word;
+            room.name = name;
+            room.occupancy = occupancy;
+            room.maxRounds = maxRounds;
 
+            let player = {
+                socketID: socket.id,
+                nickname,
+                isPartyLeader: true,
+            }
+
+            room.players.push(player);
+            room = await room.save();
+            socket.join(room);
+            io.to(name).emit('updateRoom', room);
         } catch (e){
             console.log(e);
         }

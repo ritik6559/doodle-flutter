@@ -17,6 +17,7 @@ class PaintScreen extends StatefulWidget {
 
 class _PainScreenState extends State<PaintScreen> {
   late IO.Socket _socket;
+  String dataOfRoom = "";
 
   @override
   void initState() {
@@ -33,17 +34,28 @@ class _PainScreenState extends State<PaintScreen> {
     _socket.connect();
 
     if (widget.screenFrom == 'createRoom') {
-      _socket.emit('create-gae',widget.data);
+      _socket.emit('create-game', widget.data);
     }
 
     //listen to socket
     _socket.onConnect((data) {
-      print(data);
+      _socket.on('updateRoom', (roomData) {
+        setState(() {
+          dataOfRoom = roomData;
+        });
+        print(dataOfRoom);
+
+        if (roomData['isJoin'] != true) {
+          // start the timer
+        }
+      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold();
+    return Scaffold(
+      body: Container(),
+    );
   }
 }
