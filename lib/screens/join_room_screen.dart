@@ -45,11 +45,11 @@ class _JoinRoomScreenState extends State<JoinRoomScreen> {
           const SizedBox(height: 40),
           ElevatedButton(
             onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const PaintScreen(),
-                ),
-              );
+              // Navigator.of(context).push(
+              //   MaterialPageRoute(
+              //     builder: (context) => const PaintScreen(),
+              //   ),
+              // );
             },
             style: ButtonStyle(
               backgroundColor: const WidgetStatePropertyAll(

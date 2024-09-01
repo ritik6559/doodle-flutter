@@ -3,7 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class PaintScreen extends StatefulWidget {
-  const PaintScreen({super.key});
+  final Map data;
+  final String screenFrom;
+  const PaintScreen({
+    super.key,
+    required this.data,
+    required this.screenFrom,
+  });
 
   @override
   State<PaintScreen> createState() => _PainScreenState();
@@ -19,12 +25,16 @@ class _PainScreenState extends State<PaintScreen> {
   }
 
   void connect() {
-    _socket = IO.io('http://192.168.212.99:3000', <String, dynamic>{
+    _socket = IO.io('http://$ip:3000', <String, dynamic>{
       'transports': ['websocket'],
       'autoConnect': false,
     });
 
     _socket.connect();
+
+    if (widget.screenFrom == 'createRoom') {
+      _socket.emit('create-gae',widget.data);
+    }
 
     //listen to socket
     _socket.onConnect((data) {

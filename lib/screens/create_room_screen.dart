@@ -1,3 +1,4 @@
+import 'package:doodle/screens/paint_screen.dart';
 import 'package:doodle/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 
@@ -14,6 +15,29 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
 
   late String? _maxRounds;
   late String? _roomSize;
+
+  void createRoom() {
+    if (_nameController.text.isNotEmpty &&
+        _roomNameController.text.isNotEmpty &&
+        _maxRounds != null &&
+        _roomSize != null) {
+      Map data = {
+        "nickname": _nameController.text,
+        "name": _roomNameController.text,
+        "occupancy": _roomSize,
+        "maxRounds": _maxRounds,
+      };
+
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => PaintScreen(
+            data: data,
+            screenFrom: 'createRoom',
+          ),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +140,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
           ),
           const SizedBox(height: 40),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: createRoom,
             style: ButtonStyle(
                 backgroundColor: const WidgetStatePropertyAll(
                   Colors.blue,

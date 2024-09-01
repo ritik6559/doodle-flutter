@@ -18,6 +18,17 @@ mongodb.connect(DB).then(() =>{
     console.log(e);
 })
 
+io.on('connection',(socket) => {
+    console.log("connected");
+    socket.on('create-game',async({nickname, name, occupancy, maxRounds}) => {
+        try{
+
+        } catch (e){
+            console.log(e);
+        }
+    });
+});
+
 server.listen(PORT, '0.0.0.0',() => {
     console.log(`server connected at ${PORT}`);
 })
