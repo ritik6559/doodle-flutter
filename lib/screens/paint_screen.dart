@@ -100,12 +100,11 @@ class _PainScreenState extends State<PaintScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Container(
+              SizedBox(
                 width: width,
                 height: height * 0.55,
                 child: GestureDetector(
                   onPanUpdate: (details) {
-                    print(details.localPosition.dx);
                     _socket.emit(
                       'paint',
                       {
@@ -118,7 +117,6 @@ class _PainScreenState extends State<PaintScreen> {
                     );
                   },
                   onPanStart: (details) {
-                    print(details.localPosition.dx);
                     _socket.emit(
                       'paint',
                       {
@@ -131,7 +129,6 @@ class _PainScreenState extends State<PaintScreen> {
                     );
                   },
                   onPanEnd: (details) {
-                    print(details.localPosition.dx);
                     _socket.emit(
                       'paint',
                       {
