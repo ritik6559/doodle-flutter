@@ -80,6 +80,10 @@ io.on('connection', (socket) => {
         } catch (e) {
             console.log(e);
         }
+    });
+
+    socket.on('paint', ({details, roomName}) => {
+        io.to(roomName).emit('points', {details: details});
     })
 });
 
