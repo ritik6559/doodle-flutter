@@ -125,7 +125,14 @@ class _PainScreenState extends State<PaintScreen> {
     );
   }
 
-  void selectColor() {
+  
+
+  @override
+  Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    final height = MediaQuery.of(context).size.height;
+
+    void selectColor() {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -163,11 +170,6 @@ class _PainScreenState extends State<PaintScreen> {
       ),
     );
   }
-
-  @override
-  Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final height = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(

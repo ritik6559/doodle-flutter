@@ -94,8 +94,8 @@ io.on('connection', (socket) => {
         io.to(roomName).emit('stroke-change', stroke);
     });
 
-    socket.on('clear-screen', (roomName)=> {
-        io.to(roomName).emit('clear-screen');
+    socket.on('clear-screen', (name)=> {
+        io.to(name).emit('clear-screen');
     })
 });
 
