@@ -84,6 +84,18 @@ io.on('connection', (socket) => {
 
     socket.on('paint', ({details, roomName}) => {
         io.to(roomName).emit('points', {details: details});
+    });
+
+    socket.on('color-change',({color, roomName}) => {
+        io.to(roomName).emit('color-change', color);
+    });
+
+    socket.on('stroke-change',({stroke, roomName}) => {
+        io.to(roomName).emit('stroke-change', stroke);
+    });
+
+    socket.on('clear-screen', (roomName)=> {
+        io.to(roomName).emit('clear-screen');
     })
 });
 
