@@ -29,6 +29,9 @@ class _PainScreenState extends State<PaintScreen> {
 
   List<Widget> textBlankWdget = [];
 
+  ScrollController _scrollController = ScrollController();
+  List<Map> messages = [];
+
   @override
   void initState() {
     super.initState();
@@ -39,7 +42,7 @@ class _PainScreenState extends State<PaintScreen> {
     textBlankWdget.clear();
     for (int i = 0; i < text.length; i++) {
       textBlankWdget.add(
-        Text(
+        const Text(
           '_',
           style: TextStyle(
             fontSize: 30,
@@ -71,6 +74,9 @@ class _PainScreenState extends State<PaintScreen> {
           (roomData) {
             setState(() {
               renderTextBlank(
+                roomData['word'],
+              );
+              print(
                 roomData['word'],
               );
               dataOfRoom = roomData;
@@ -289,8 +295,36 @@ class _PainScreenState extends State<PaintScreen> {
                 ],
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: textBlankWdget,
+              ),
+              Container(
+                height: MediaQuery.of(context).size.height * 0.3,
+                child: ListView.builder(
+                  controller: _scrollController,
+                  shrinkWrap: true,
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) {
+                    var message = messages[index].values;
+                    return ListTile(
+                      title: Text(
+                        message.elementAt(0),
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 19,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      subtitle: Text(
+                        message.elementAt(1),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    );
+                  },
+                ),
               )
             ],
           )
