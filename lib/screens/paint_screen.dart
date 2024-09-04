@@ -27,10 +27,26 @@ class _PainScreenState extends State<PaintScreen> {
   double opacity = 1;
   double strokeWidth = 4;
 
+  List<Widget> textBlankWdget = [];
+
   @override
   void initState() {
     super.initState();
     connect();
+  }
+
+  void renderTextBlank(String text) {
+    textBlankWdget.clear();
+    for (int i = 0; i < text.length; i++) {
+      textBlankWdget.add(
+        Text(
+          '_',
+          style: TextStyle(
+            fontSize: 30,
+          ),
+        ),
+      );
+    }
   }
 
   void connect() {
@@ -54,6 +70,9 @@ class _PainScreenState extends State<PaintScreen> {
           'updateRoom',
           (roomData) {
             setState(() {
+              renderTextBlank(
+                roomData['word'],
+              );
               dataOfRoom = roomData;
             });
 
@@ -125,51 +144,50 @@ class _PainScreenState extends State<PaintScreen> {
     );
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
 
     void selectColor() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: const Text(
-              'Close',
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text(
+                'Close',
+              ),
+            ),
+          ],
+          title: const Text(
+            "Choose Color",
+          ),
+          content: SingleChildScrollView(
+            child: BlockPicker(
+              pickerColor: selectedColor,
+              onColorChanged: (color) {
+                String colorString = color.toString();
+                String valueString = colorString
+                    .split('(0x')[1]
+                    .split(')')[0]; // it will give us the hex code
+                print(colorString);
+                print(valueString);
+                Map map = {
+                  'color': valueString,
+                  'roomName': dataOfRoom['name'],
+                };
+                _socket.emit('color-change', map);
+              },
             ),
           ),
-        ],
-        title: const Text(
-          "Choose Color",
         ),
-        content: SingleChildScrollView(
-          child: BlockPicker(
-            pickerColor: selectedColor,
-            onColorChanged: (color) {
-              String colorString = color.toString();
-              String valueString = colorString
-                  .split('(0x')[1]
-                  .split(')')[0]; // it will give us the hex code
-              print(colorString);
-              print(valueString);
-              Map map = {
-                'color': valueString,
-                'roomName': dataOfRoom['name'],
-              };
-              _socket.emit('color-change', map);
-            },
-          ),
-        ),
-      ),
-    );
-  }
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
@@ -269,6 +287,10 @@ class _PainScreenState extends State<PaintScreen> {
                     ),
                   ),
                 ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: textBlankWdget,
               )
             ],
           )
