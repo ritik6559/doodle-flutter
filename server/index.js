@@ -82,21 +82,32 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('paint', ({details, roomName}) => {
-        io.to(roomName).emit('points', {details: details});
+    socket.on('paint', ({ details, roomName }) => {
+        io.to(roomName).emit('points', { details: details });
     });
 
-    socket.on('color-change',({color, roomName}) => {
+    socket.on('color-change', ({ color, roomName }) => {
         io.to(roomName).emit('color-change', color);
     });
 
-    socket.on('stroke-change',({stroke, roomName}) => {
+    socket.on('stroke-change', ({ stroke, roomName }) => {
         io.to(roomName).emit('stroke-change', stroke);
     });
 
-    socket.on('clear-screen', (name)=> {
+    socket.on('clear-screen', (name) => {
         io.to(name).emit('clear-screen');
-    })
+    });
+
+    socket.on('msg', (data) => {
+        try {
+            io.to(data.roomName).emit('msg', {
+                username: data.username,
+                'msg': data.msg,
+            })
+        } catch (e) {
+            console.log(e);
+        }
+    });
 });
 
 server.listen(PORT, '0.0.0.0', () => {

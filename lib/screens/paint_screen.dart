@@ -32,6 +32,8 @@ class _PainScreenState extends State<PaintScreen> {
   ScrollController _scrollController = ScrollController();
   List<Map> messages = [];
 
+  TextEditingController _commentsController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -146,6 +148,22 @@ class _PainScreenState extends State<PaintScreen> {
         setState(() {
           points.clear();
         });
+      },
+    );
+
+    _socket.on(
+      'msg',
+      (msgData) {
+        setState(() {
+          messages.add(msgData);
+        });
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent + 40,
+          duration: const Duration(
+            milliseconds: 200,
+          ),
+          curve: Curves.easeInOut,
+        );
       },
     );
   }
@@ -325,8 +343,55 @@ class _PainScreenState extends State<PaintScreen> {
                     );
                   },
                 ),
-              )
+              ),
             ],
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Container(
+              margin: const EdgeInsets.symmetric(
+                horizontal: 20,
+              ),
+              child: TextField(
+                autocorrect: false,
+                controller: _commentsController,
+                onSubmitted: (value) {
+                  print("value:- ${value.trim()}");
+                  if (value.trim().isNotEmpty) {
+                    Map map = {
+                      'username': widget.data['nickname'],
+                      'msg': _commentsController.text.trim(),
+                      'word': dataOfRoom['word'],
+                      'roomName': widget.data['name'],
+                    };
+                    _socket.emit('msg', map);
+                    _commentsController.clear();
+                  }
+                },
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: Colors.transparent),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: const BorderSide(color: Colors.transparent),
+                  ),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  filled: true,
+                  fillColor: const Color(0xffF5F5FA),
+                  hintText: 'Your guess',
+                  hintStyle: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                textInputAction: TextInputAction.search,
+
+
+              ),
+            ),
           )
         ],
       ),
