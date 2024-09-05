@@ -11,7 +11,6 @@ const getWord = require('./api/getWord');
 //middleware
 app.use(express.json());
 
-
 const DB = "mongodb+srv://ritikjoshi741:9456597017ritik@cluster0.vvntg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 mongodb.connect(DB).then(() => {
@@ -49,7 +48,6 @@ io.on('connection', (socket) => {
             console.log(e);
         }
     });
-
 
     socket.on('join-game', async ({ nickname, name }) => {
         try {

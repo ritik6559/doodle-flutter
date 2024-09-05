@@ -1100,7 +1100,6 @@ const getWord = () => {
         "zippy",
         "zonked",
     ];
-
     return adjectives[Math.floor(Math.random() * adjectives.length)];
 };
 
