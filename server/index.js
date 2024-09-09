@@ -96,12 +96,58 @@ io.on('connection', (socket) => {
         io.to(name).emit('clear-screen');
     });
 
-    socket.on('msg', (data) => {
+    socket.on('msg',async (data) => {
         try {
+            if(data.msg == data.word){
+                let room = await Room.findOne({name: data.roomName});
+                let userPlayer = room[0].players.filter(
+                    (player) => player.nickname == data.username
+                );
+                if(data.timeTaken == 0){
+                    userPlayer[0].players == Math.round((200 / data.timeTaken) * 10);
+                }
+
+                room = await room[0].save();
+
+                io.to(data.roomName).emit('msg', {
+                    username: data.username,
+                    'msg': "Gussed it!",
+                    guessedUserCtr: data.guessedUserCtr + 1,
+                });
+            } else {
+                io.to(data.roomName).emit('msg', {
+                    username: data.username,
+                    'msg': data.msg,
+                    guessedUserCtr: data.guessedUserCtr,
+                });
+            }
             io.to(data.roomName).emit('msg', {
                 username: data.username,
                 'msg': data.msg,
-            })
+                guessedUserCtr: data.guessedUserCtr,
+            });
+        } catch (e) {
+            console.log(e);
+        }
+    });
+
+    socket.on('change-turn', async(name) => {
+        try {
+            let room = await Room.findOne({name});
+            let idx = room.turnIndex;
+            if(idx + 1 == room.players.length){
+                room.currentRound += 1;
+            }
+            if(room.currentRound <= room.maxRounds){
+                const word = getWord();
+                room.word = word;
+                room.turnIndex = (idx + 1) % room.players.length;
+                room.turn = room.players[room.turnIndex];
+                room = await room.save();
+                io.to(name).emit('change-turn', room);
+            } else {
+                // show the leaderboard
+            }
         } catch (e) {
             console.log(e);
         }

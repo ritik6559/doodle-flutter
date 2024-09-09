@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:doodle/models/my_custom_painter.dart';
 import 'package:doodle/models/touch_points.dart';
 import 'package:doodle/secrets.dart';
@@ -26,18 +28,40 @@ class _PainScreenState extends State<PaintScreen> {
   Color selectedColor = Colors.black;
   double opacity = 1;
   double strokeWidth = 4;
-
   List<Widget> textBlankWdget = [];
-
   ScrollController _scrollController = ScrollController();
   List<Map> messages = [];
-
   TextEditingController _commentsController = TextEditingController();
+  int guessedUserCounter = 0;
+  int _start = 60;
+  late Timer _timer;
 
   @override
   void initState() {
     super.initState();
     connect();
+  }
+
+  void startTimer() {
+    const oneSec = Duration(seconds: 1);
+    _timer = Timer.periodic(
+      oneSec,
+      (Timer timer) {
+        if (_start == 0) {
+          _socket.emit(
+            'change-turn',
+            dataOfRoom['name'],
+          );
+          setState(() {
+            _timer.cancel();
+          });
+        } else {
+          setState(() {
+            _start--;
+          });
+        }
+      },
+    );
   }
 
   void renderTextBlank(String text) {
@@ -85,7 +109,7 @@ class _PainScreenState extends State<PaintScreen> {
             });
 
             if (roomData['isJoin'] != true) {
-              // start the timer
+              startTimer();
             }
           },
         );
@@ -156,13 +180,51 @@ class _PainScreenState extends State<PaintScreen> {
       (msgData) {
         setState(() {
           messages.add(msgData);
+          guessedUserCounter = msgData['guessedUserCtr'];
         });
+
+        if (guessedUserCounter == dataOfRoom['players'].length - 1) {
+          _socket.emit('change-turn', dataOfRoom['name']);
+        }
+
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent + 40,
           duration: const Duration(
             milliseconds: 200,
           ),
           curve: Curves.easeInOut,
+        );
+      },
+    );
+
+    _socket.on(
+      'change-turn',
+      (data) {
+        String oldWord = dataOfRoom['word'];
+        showDialog(
+          context: context,
+          builder: (context) {
+            Future.delayed(const Duration(seconds: 3), () {
+              setState(() {
+                dataOfRoom = data;
+                renderTextBlank(data['word']);
+                guessedUserCounter = 0;
+                _start = 60;
+                points.clear();
+              });
+              Navigator.of(context).pop();
+              _timer.cancel();
+              startTimer();
+            });
+
+            return AlertDialog(
+              title: Center(
+                child: Text(
+                  'word was $oldWord',
+                ),
+              ),
+            );
+          },
         );
       },
     );
@@ -363,6 +425,9 @@ class _PainScreenState extends State<PaintScreen> {
                       'msg': _commentsController.text.trim(),
                       'word': dataOfRoom['word'],
                       'roomName': widget.data['name'],
+                      'guessedUserCtr': guessedUserCounter,
+                      'totalTime': 60,
+                      'timeTaken': 60 - _start,
                     };
                     _socket.emit('msg', map);
                     _commentsController.clear();
@@ -387,13 +452,26 @@ class _PainScreenState extends State<PaintScreen> {
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                textInputAction: TextInputAction.search,
-
-
+                textInputAction: TextInputAction.done,
               ),
             ),
           )
         ],
+      ),
+      floatingActionButton: Container(
+        margin: const EdgeInsets.only(bottom: 30),
+        child: FloatingActionButton(
+          onPressed: () {},
+          elevation: 7,
+          backgroundColor: Colors.white,
+          child: Text(
+            '$_start',
+            style: const TextStyle(
+              color: Colors.black,
+              fontSize: 22,
+            ),
+          ),
+        ),
       ),
     );
   }
