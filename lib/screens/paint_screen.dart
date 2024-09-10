@@ -365,7 +365,7 @@ class _PainScreenState extends State<PaintScreen> {
                   ),
                   IconButton(
                     onPressed: () {
-                      _socket.emit('clear-screen', dataOfRoom);
+                      _socket.emit('clear-screen', dataOfRoom['name']);
                     },
                     icon: Icon(
                       Icons.layers_clear,
