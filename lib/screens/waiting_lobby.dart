@@ -40,7 +40,7 @@ class _WaitingLobbyState extends State<WaitingLobby> {
             child: TextField(
               readOnly: true,
               onTap: () {
-                // copy room code
+                // copy room name
                 Clipboard.setData(ClipboardData(text: widget.lobbyName));
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
@@ -79,27 +79,28 @@ class _WaitingLobbyState extends State<WaitingLobby> {
             ),
           ),
           ListView.builder(
-              primary: true,
-              shrinkWrap: true,
-              itemCount: widget.noOfPlayers,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  leading: Text(
-                    "${index + 1}.",
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
+            primary: true,
+            shrinkWrap: true,
+            itemCount: widget.noOfPlayers,
+            itemBuilder: (context, index) {
+              return ListTile(
+                leading: Text(
+                  "${index + 1}.",
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
                   ),
-                  title: Text(
-                    widget.players[index]['nickname'],
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
+                ),
+                title: Text(
+                  widget.players[index]['nickname'],
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
                   ),
-                );
-              })
+                ),
+              );
+            },
+          )
         ],
       ),
     );
