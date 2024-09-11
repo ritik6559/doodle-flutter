@@ -8,7 +8,7 @@ class PlayerScore extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       child: Center(
-        child: Container(
+        child: SizedBox(
           height: double.maxFinite,
           child: ListView.builder(
             itemCount: userData.length,

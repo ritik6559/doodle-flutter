@@ -29,7 +29,7 @@ class _PaintScreenState extends State<PaintScreen> {
   double opacity = 1;
   double strokeWidth = 2;
   List<Widget> textBlankWidget = [];
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
   TextEditingController controller = TextEditingController();
   List<Map> messages = [];
   int guessedUserCtr = 0;
@@ -467,7 +467,7 @@ class _PaintScreenState extends State<PaintScreen> {
                             : Container(),
                         SafeArea(
                           child: IconButton(
-                            icon: Icon(Icons.menu, color: Colors.black),
+                            icon: const Icon(Icons.menu, color: Colors.black),
                             onPressed: () =>
                                 scaffoldKey.currentState!.openDrawer(),
                           ),
