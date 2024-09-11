@@ -18,7 +18,7 @@ mongoose.connect(DB).then(() => {
     console.log('Connection Succesful!');
 }).catch((e) => {
     console.log(e);
-})
+});
 
 io.on('connection', (socket) => {
     console.log('connected');
@@ -80,7 +80,7 @@ io.on('connection', (socket) => {
         } catch(err) {
             console.log(err);
         }
-    })
+    });
 
     socket.on('msg', async (data) => {
         console.log(data);
@@ -110,7 +110,7 @@ io.on('connection', (socket) => {
         } catch(err) {
             console.log(err.toString());
         }
-    })
+    });
 
     socket.on('change-turn', async(name) => {
         try {
@@ -132,7 +132,7 @@ io.on('connection', (socket) => {
         } catch(err) {
             console.log(err);
         }
-    })
+    });
 
     socket.on('updateScore', async (name) => {
         try {
@@ -141,27 +141,27 @@ io.on('connection', (socket) => {
         } catch(err) {
             console.log(err);
         }
-    })
+    });
 
     // White board sockets
     socket.on('paint', ({details, roomName}) => {
         io.to(roomName).emit('points', {details: details});
-    })
+    });
 
     // Color socket
     socket.on('color-change', ({color, roomName}) => {
         io.to(roomName).emit('color-change', color);
-    })
+    });
 
     // Stroke Socket
     socket.on('stroke-width', ({value, roomName}) => {
         io.to(roomName).emit('stroke-width', value);
-    })
+    });
 
     // Clear Screen
     socket.on('clean-screen', (roomName) => {
         io.to(roomName).emit('clear-screen', '');
-    })
+    });
 
     socket.on('disconnect', async() => {
         try {
@@ -181,12 +181,12 @@ io.on('connection', (socket) => {
         } catch(err) {
             console.log(err);
         }
-    })
-})
+    });
+});
 
 server.listen(port, "0.0.0.0", () => {
     console.log('Server started and running on port ' + port);
-})
+});
 
 
 

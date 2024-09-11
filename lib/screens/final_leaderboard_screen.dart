@@ -11,8 +11,9 @@ class FinalLeaderboard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(8),
         height: double.maxFinite,
-        child: Column(children: [
-          ListView.builder(
+        child: Column(
+          children: [
+            ListView.builder(
               primary: true,
               shrinkWrap: true,
               itemCount: scoreboard.length,
@@ -28,19 +29,21 @@ class FinalLeaderboard extends StatelessWidget {
                           fontSize: 20,
                           fontWeight: FontWeight.bold)),
                 );
-              }),
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: Text(
-              "$winner has won the game!",
-              style: const TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 30,
+              },
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Text(
+                "$winner has won the game!",
+                style: const TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30,
+                ),
               ),
             ),
-          ),
-        ]),
+          ],
+        ),
       ),
     );
   }

@@ -20,14 +20,16 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
         _roomNameController.text.isNotEmpty &&
         _maxRoundsValue != null &&
         _roomSizeValue != null) {
-          Map<String, String> data = {
-            "nickname": _nameController.text,
-            "name": _roomNameController.text,
-            "occupancy": _maxRoundsValue!,
-            "maxRounds": _roomSizeValue!
-          };
-          Navigator.of(context).push(MaterialPageRoute(builder: (context) => PaintScreen(data: data, screenFrom: 'createRoom')));
-        }
+      Map<String, String> data = {
+        "nickname": _nameController.text,
+        "name": _roomNameController.text,
+        "occupancy": _maxRoundsValue!,
+        "maxRounds": _roomSizeValue!
+      };
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (context) =>
+              PaintScreen(data: data, screenFrom: 'createRoom')));
+    }
   }
 
   @override
@@ -68,7 +70,9 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
                     value: value,
                     child: Text(
                       value,
-                      style: const TextStyle(color: Colors.black),
+                      style: const TextStyle(
+                        color: Colors.black,
+                      ),
                     ),
                   ),
                 )
@@ -94,17 +98,21 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
                     value: value,
                     child: Text(
                       value,
-                      style: const TextStyle(color: Colors.black),
+                      style: const TextStyle(
+                        color: Colors.black,
+                      ),
                     ),
                   ),
                 )
                 .toList(),
-            hint: const Text('Select Room Size',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                )),
+            hint: const Text(
+              'Select Room Size',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
             onChanged: (String? value) {
               setState(() {
                 _roomSizeValue = value;
@@ -115,14 +123,27 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
           ElevatedButton(
             onPressed: createRoom,
             style: ButtonStyle(
-                backgroundColor: WidgetStateProperty.all(Colors.blue),
-                textStyle:
-                    WidgetStateProperty.all(const TextStyle(color: Colors.white)),
-                minimumSize: WidgetStateProperty.all(
-                    Size(MediaQuery.of(context).size.width / 2.5, 50))),
+              backgroundColor: WidgetStateProperty.all(
+                Colors.blue,
+              ),
+              textStyle: WidgetStateProperty.all(
+                const TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              minimumSize: WidgetStateProperty.all(
+                Size(
+                  MediaQuery.of(context).size.width / 2.5,
+                  50,
+                ),
+              ),
+            ),
             child: const Text(
               "Create",
-              style: TextStyle(color: Colors.white, fontSize: 16),
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+              ),
             ),
           ),
         ],

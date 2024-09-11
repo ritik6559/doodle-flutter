@@ -51,24 +51,34 @@ class _PaintScreenState extends State<PaintScreen> {
 
   void startTimer() {
     const oneSec = Duration(seconds: 1);
-    _timer = Timer.periodic(oneSec, (Timer time) {
-      if (_start == 0) {
-        _socket.emit('change-turn', dataOfRoom['name']);
-        setState(() {
-          _timer.cancel();
-        });
-      } else {
-        setState(() {
-          _start--;
-        });
-      }
-    });
+    _timer = Timer.periodic(
+      oneSec,
+      (Timer time) {
+        if (_start == 0) {
+          _socket.emit('change-turn', dataOfRoom['name']);
+          setState(() {
+            _timer.cancel();
+          });
+        } else {
+          setState(() {
+            _start--;
+          });
+        }
+      },
+    );
   }
 
   void renderTextBlank(String text) {
     textBlankWidget.clear();
     for (int i = 0; i < text.length; i++) {
-      textBlankWidget.add(const Text('_', style: TextStyle(fontSize: 30)));
+      textBlankWidget.add(
+        const Text(
+          '_',
+          style: TextStyle(
+            fontSize: 30,
+          ),
+        ),
+      );
     }
   }
 
@@ -87,157 +97,177 @@ class _PaintScreenState extends State<PaintScreen> {
     }
 
     // listen to socket
-    _socket.onConnect((data) {
-      print('connected!');
-      _socket.on('updateRoom', (roomData) {
-        print(roomData['word']);
-        setState(() {
-          renderTextBlank(roomData['word']);
-          dataOfRoom = roomData;
-        });
-        if (roomData['isJoin'] != true) {
-          startTimer();
-        }
-        scoreboard.clear();
-        for (int i = 0; i < roomData['players'].length; i++) {
-          setState(() {
-            scoreboard.add({
-              'username': roomData['players'][i]['nickname'],
-              'points': roomData['players'][i]['points'].toString()
+    _socket.onConnect(
+      (data) {
+        print('connected!');
+        _socket.on(
+          'updateRoom',
+          (roomData) {
+            print(roomData['word']);
+            setState(() {
+              renderTextBlank(roomData['word']);
+              dataOfRoom = roomData;
             });
-          });
-        }
-      });
-
-      _socket.on(
-          'notCorrectGame',
-          (data) => Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
-              (route) => false));
-
-      _socket.on('points', (point) {
-        if (point['details'] != null) {
-          setState(() {
-            points.add(TouchPoints(
-                points: Offset((point['details']['dx']).toDouble(),
-                    (point['details']['dy']).toDouble()),
-                paint: Paint()
-                  ..strokeCap = strokeType
-                  ..isAntiAlias = true
-                  ..color = selectedColor.withOpacity(opacity)
-                  ..strokeWidth = strokeWidth));
-          });
-        }
-      });
-
-      _socket.on('msg', (msgData) {
-        setState(() {
-          messages.add(msgData);
-          guessedUserCtr = msgData['guessedUserCtr'];
-        });
-        if (guessedUserCtr == dataOfRoom['players'].length - 1) {
-          _socket.emit('change-turn', dataOfRoom['name']);
-        }
-        _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent + 40,
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeInOut);
-      });
-
-      _socket.on('change-turn', (data) {
-        String oldWord = dataOfRoom['word'];
-        showDialog(
-            context: context,
-            builder: (context) {
-              Future.delayed(const Duration(seconds: 3), () {
-                setState(() {
-                  dataOfRoom = data;
-                  renderTextBlank(data['word']);
-                  isTextInputReadOnly = false;
-                  guessedUserCtr = 0;
-                  _start = 60;
-                  points.clear();
-                });
-                Navigator.of(context).pop();
-                _timer.cancel();
-                startTimer();
+            if (roomData['isJoin'] != true) {
+              startTimer();
+            }
+            scoreboard.clear();
+            for (int i = 0; i < roomData['players'].length; i++) {
+              setState(() {
+                scoreboard.add(
+                  {
+                    'username': roomData['players'][i]['nickname'],
+                    'points': roomData['players'][i]['points'].toString()
+                  },
+                );
               });
-              return AlertDialog(
-                  title: Center(child: Text('Word was $oldWord')));
-            });
-      });
+            }
+          },
+        );
 
-      _socket.on('updateScore', (roomData) {
-        scoreboard.clear();
-        for (int i = 0; i < roomData['players'].length; i++) {
-          setState(() {
-            scoreboard.add({
-              'username': roomData['players'][i]['nickname'],
-              'points': roomData['players'][i]['points'].toString()
-            });
-          });
-        }
-      });
+        _socket.on(
+            'notCorrectGame',
+            (data) => Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => const HomeScreen()),
+                (route) => false));
 
-      _socket.on("show-leaderboard", (roomPlayers) {
-        scoreboard.clear();
-        for (int i = 0; i < roomPlayers.length; i++) {
-          setState(() {
-            scoreboard.add({
-              'username': roomPlayers[i]['nickname'],
-              'points': roomPlayers[i]['points'].toString()
+        _socket.on(
+          'points',
+          (point) {
+            if (point['details'] != null) {
+              setState(() {
+                points.add(TouchPoints(
+                    points: Offset((point['details']['dx']).toDouble(),
+                        (point['details']['dy']).toDouble()),
+                    paint: Paint()
+                      ..strokeCap = strokeType
+                      ..isAntiAlias = true
+                      ..color = selectedColor.withOpacity(opacity)
+                      ..strokeWidth = strokeWidth));
+              });
+            }
+          },
+        );
+
+        _socket.on(
+          'msg',
+          (msgData) {
+            setState(() {
+              messages.add(msgData);
+              guessedUserCtr = msgData['guessedUserCtr'];
             });
-          });
-          if (maxPoints < int.parse(scoreboard[i]['points'])) {
-            winner = scoreboard[i]['username'];
-            maxPoints = int.parse(scoreboard[i]['points']);
+            if (guessedUserCtr == dataOfRoom['players'].length - 1) {
+              _socket.emit('change-turn', dataOfRoom['name']);
+            }
+            _scrollController.animateTo(
+                _scrollController.position.maxScrollExtent + 40,
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeInOut);
+          },
+        );
+
+        _socket.on(
+          'change-turn',
+          (data) {
+            String oldWord = dataOfRoom['word'];
+            showDialog(
+              context: context,
+              builder: (context) {
+                Future.delayed(
+                  const Duration(seconds: 3),
+                  () {
+                    setState(() {
+                      dataOfRoom = data;
+                      renderTextBlank(data['word']);
+                      isTextInputReadOnly = false;
+                      guessedUserCtr = 0;
+                      _start = 60;
+                      points.clear();
+                    });
+                    Navigator.of(context).pop();
+                    _timer.cancel();
+                    startTimer();
+                  },
+                );
+                return AlertDialog(
+                    title: Center(child: Text('Word was $oldWord')));
+              },
+            );
+          },
+        );
+
+        _socket.on('updateScore', (roomData) {
+          scoreboard.clear();
+          for (int i = 0; i < roomData['players'].length; i++) {
+            setState(() {
+              scoreboard.add({
+                'username': roomData['players'][i]['nickname'],
+                'points': roomData['players'][i]['points'].toString()
+              });
+            });
           }
-        }
-        setState(() {
-          _timer.cancel();
-          isShowFinalLeaderboard = true;
         });
-      });
 
-      _socket.on('color-change', (colorString) {
-        int value = int.parse(colorString, radix: 16);
-        Color otherColor = Color(value);
-        setState(() {
-          selectedColor = otherColor;
-        });
-      });
-
-      _socket.on('stroke-width', (value) {
-        setState(() {
-          strokeWidth = value.toDouble();
-        });
-      });
-
-      _socket.on('clear-screen', (data) {
-        setState(() {
-          points.clear();
-        });
-      });
-
-      _socket.on('closeInput', (_) {
-        _socket.emit('updateScore', widget.data['name']);
-        setState(() {
-          isTextInputReadOnly = true;
-        });
-      });
-
-      _socket.on('user-disconnected', (data) {
-        scoreboard.clear();
-        for (int i = 0; i < data['players'].length; i++) {
-          setState(() {
-            scoreboard.add({
-              'username': data['players'][i]['nickname'],
-              'points': data['players'][i]['points'].toString()
+        _socket.on("show-leaderboard", (roomPlayers) {
+          scoreboard.clear();
+          for (int i = 0; i < roomPlayers.length; i++) {
+            setState(() {
+              scoreboard.add({
+                'username': roomPlayers[i]['nickname'],
+                'points': roomPlayers[i]['points'].toString()
+              });
             });
+            if (maxPoints < int.parse(scoreboard[i]['points'])) {
+              winner = scoreboard[i]['username'];
+              maxPoints = int.parse(scoreboard[i]['points']);
+            }
+          }
+          setState(() {
+            _timer.cancel();
+            isShowFinalLeaderboard = true;
           });
-        }
-      });
-    });
+        });
+
+        _socket.on('color-change', (colorString) {
+          int value = int.parse(colorString, radix: 16);
+          Color otherColor = Color(value);
+          setState(() {
+            selectedColor = otherColor;
+          });
+        });
+
+        _socket.on('stroke-width', (value) {
+          setState(() {
+            strokeWidth = value.toDouble();
+          });
+        });
+
+        _socket.on('clear-screen', (data) {
+          setState(() {
+            points.clear();
+          });
+        });
+
+        _socket.on('closeInput', (_) {
+          _socket.emit('updateScore', widget.data['name']);
+          setState(() {
+            isTextInputReadOnly = true;
+          });
+        });
+
+        _socket.on('user-disconnected', (data) {
+          scoreboard.clear();
+          for (int i = 0; i < data['players'].length; i++) {
+            setState(() {
+              scoreboard.add({
+                'username': data['players'][i]['nickname'],
+                'points': data['players'][i]['points'].toString()
+              });
+            });
+          }
+        });
+      },
+    );
   }
 
   @override
