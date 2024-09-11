@@ -114,6 +114,7 @@ io.on('connection', (socket) => {
                     'msg': "Gussed it!",
                     guessedUserCtr: data.guessedUserCtr + 1,
                 });
+                socket.emit('closeInput',"");
             } else {
                 io.to(data.roomName).emit('msg', {
                     username: data.username,
@@ -149,6 +150,15 @@ io.on('connection', (socket) => {
                 // show the leaderboard
             }
         } catch (e) {
+            console.log(e);
+        }
+    });
+
+    socket.on('updateScore', async(name) => {
+        try{
+            const room = await Room.findOne({name});
+            io.to(name).emit('updateScore', room);
+        } catch (e){
             console.log(e);
         }
     });

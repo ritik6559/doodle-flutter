@@ -4,6 +4,7 @@ import 'package:doodle/models/my_custom_painter.dart';
 import 'package:doodle/models/touch_points.dart';
 import 'package:doodle/screens/waiting_lobby.dart';
 import 'package:doodle/secrets.dart';
+import 'package:doodle/sidebar/player_scoreboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -30,12 +31,15 @@ class _PainScreenState extends State<PaintScreen> {
   double opacity = 1;
   double strokeWidth = 4;
   List<Widget> textBlankWdget = [];
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
   List<Map> messages = [];
-  TextEditingController _commentsController = TextEditingController();
+  final TextEditingController _commentsController = TextEditingController();
   int guessedUserCounter = 0;
   int _start = 60;
   late Timer _timer;
+  var scaffoldKey = GlobalKey<ScaffoldState>();
+  List<Map> scoreboard = [];
+  bool isTextInputReadOnly = false;
 
   @override
   void initState() {
@@ -108,6 +112,15 @@ class _PainScreenState extends State<PaintScreen> {
 
             if (roomData['isJoin'] != true) {
               startTimer();
+            }
+            scoreboard.clear();
+            for (int i = 0; i < roomData['players'].length; i++) {
+              setState(() {
+                scoreboard.add({
+                  'username': roomData['players'][i]['nickname'],
+                  'points': roomData['players'][i]['points'].toString(),
+                });
+              });
             }
           },
         );
@@ -209,6 +222,7 @@ class _PainScreenState extends State<PaintScreen> {
                 guessedUserCounter = 0;
                 _start = 60;
                 points.clear();
+                isTextInputReadOnly = false;
               });
               Navigator.of(context).pop();
               _timer.cancel();
@@ -226,6 +240,25 @@ class _PainScreenState extends State<PaintScreen> {
         );
       },
     );
+
+    _socket.on('closeInput', (_) {
+      _socket.emit('updateScore', widget.data['name']);
+      setState(() {
+        isTextInputReadOnly = true;
+      });
+    });
+
+    _socket.on('updateScore', (roomData) {
+      scoreboard.clear();
+      for (int i = 0; i < roomData['players'].length; i++) {
+        setState(() {
+          scoreboard.add({
+            'username': roomData['players'][i]['nickname'],
+            'points': roomData['players'][i]['points'].toString(),
+          });
+        });
+      }
+    });
   }
 
   @override
@@ -273,6 +306,10 @@ class _PainScreenState extends State<PaintScreen> {
     }
 
     return Scaffold(
+      key: scaffoldKey,
+      drawer: PlayerScore(
+        userData: scoreboard,
+      ),
       backgroundColor: Colors.white,
       body: dataOfRoom != null
           ? dataOfRoom['isJoin'] != true
@@ -390,7 +427,7 @@ class _PainScreenState extends State<PaintScreen> {
                                   color: Colors.black,
                                 ),
                               ),
-                        Container(
+                        SizedBox(
                           height: MediaQuery.of(context).size.height * 0.3,
                           child: ListView.builder(
                             controller: _scrollController,
@@ -428,6 +465,7 @@ class _PainScreenState extends State<PaintScreen> {
                                 horizontal: 20,
                               ),
                               child: TextField(
+                                readOnly: isTextInputReadOnly,
                                 autocorrect: false,
                                 controller: _commentsController,
                                 onSubmitted: (value) {
@@ -472,6 +510,15 @@ class _PainScreenState extends State<PaintScreen> {
                             ),
                           )
                         : Container(),
+                    SafeArea(
+                      child: IconButton(
+                        onPressed: () => scaffoldKey.currentState!.openDrawer(),
+                        icon: const Icon(
+                          Icons.menu,
+                          color: Colors.black,
+                        ),
+                      ),
+                    )
                   ],
                 )
               : WaitingLobby(
