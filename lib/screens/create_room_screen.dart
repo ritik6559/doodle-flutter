@@ -1,6 +1,6 @@
-import 'package:doodle/screens/paint_screen.dart';
 import 'package:doodle/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
+import './paint_screen.dart';
 
 class CreateRoomScreen extends StatefulWidget {
   const CreateRoomScreen({super.key});
@@ -12,31 +12,22 @@ class CreateRoomScreen extends StatefulWidget {
 class _CreateRoomScreenState extends State<CreateRoomScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _roomNameController = TextEditingController();
-
-  late String? _maxRounds;
-  late String? _roomSize;
+  late String? _maxRoundsValue;
+  late String? _roomSizeValue;
 
   void createRoom() {
     if (_nameController.text.isNotEmpty &&
         _roomNameController.text.isNotEmpty &&
-        _maxRounds != null &&
-        _roomSize != null) {
-      Map data = {
-        "nickname": _nameController.text,
-        "name": _roomNameController.text,
-        "occupancy": _roomSize,
-        "maxRounds": _maxRounds,
-      };
-
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => PaintScreen(
-            data: data,
-            screenFrom: 'createRoom',
-          ),
-        ),
-      );
-    }
+        _maxRoundsValue != null &&
+        _roomSizeValue != null) {
+          Map<String, String> data = {
+            "nickname": _nameController.text,
+            "name": _roomNameController.text,
+            "occupancy": _maxRoundsValue!,
+            "maxRounds": _roomSizeValue!
+          };
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) => PaintScreen(data: data, screenFrom: 'createRoom')));
+        }
   }
 
   @override
@@ -52,9 +43,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
               fontSize: 30,
             ),
           ),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.08,
-          ),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.08),
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 20),
             child: CustomTextField(
@@ -70,9 +59,7 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
               hintText: "Enter Room Name",
             ),
           ),
-          const SizedBox(
-            height: 20,
-          ),
+          const SizedBox(height: 20),
           DropdownButton<String>(
             focusColor: const Color(0xffF5F6FA),
             items: <String>["2", "5", "10", "15"]
@@ -81,32 +68,24 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
                     value: value,
                     child: Text(
                       value,
-                      style: const TextStyle(
-                        color: Colors.black,
-                      ),
+                      style: const TextStyle(color: Colors.black),
                     ),
                   ),
                 )
                 .toList(),
-            hint: const Text(
-              'Select Max Rounds',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
+            hint: const Text('Select Max Rounds',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                )),
             onChanged: (String? value) {
-              setState(
-                () {
-                  _maxRounds = value;
-                },
-              );
+              setState(() {
+                _maxRoundsValue = value;
+              });
             },
           ),
-          const SizedBox(
-            height: 20,
-          ),
+          const SizedBox(height: 20),
           DropdownButton<String>(
             focusColor: const Color(0xffF5F6FA),
             items: <String>["2", "3", "4", "5", "6", "7", "8"]
@@ -115,42 +94,31 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
                     value: value,
                     child: Text(
                       value,
-                      style: const TextStyle(
-                        color: Colors.black,
-                      ),
+                      style: const TextStyle(color: Colors.black),
                     ),
                   ),
                 )
                 .toList(),
-            hint: const Text(
-              'Select Room Size',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
+            hint: const Text('Select Room Size',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                )),
             onChanged: (String? value) {
-              setState(
-                () {
-                  _roomSize = value;
-                },
-              );
+              setState(() {
+                _roomSizeValue = value;
+              });
             },
           ),
           const SizedBox(height: 40),
           ElevatedButton(
             onPressed: createRoom,
             style: ButtonStyle(
-                backgroundColor: const WidgetStatePropertyAll(
-                  Colors.blue,
-                ),
-                textStyle: const WidgetStatePropertyAll(
-                  TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
-                minimumSize: WidgetStatePropertyAll(
+                backgroundColor: WidgetStateProperty.all(Colors.blue),
+                textStyle:
+                    WidgetStateProperty.all(const TextStyle(color: Colors.white)),
+                minimumSize: WidgetStateProperty.all(
                     Size(MediaQuery.of(context).size.width / 2.5, 50))),
             child: const Text(
               "Create",

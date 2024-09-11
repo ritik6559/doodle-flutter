@@ -16,9 +16,9 @@ class _JoinRoomScreenState extends State<JoinRoomScreen> {
   void joinRoom() {
     if (_nameController.text.isNotEmpty &&
         _roomNameController.text.isNotEmpty) {
-      Map data = {
-        'nickName': _nameController.text,
-        'name': _roomNameController.text,
+      Map<String, String> data = {
+        "nickname": _nameController.text,
+        "name": _roomNameController.text
       };
 
       Navigator.of(context).push(
@@ -29,8 +29,6 @@ class _JoinRoomScreenState extends State<JoinRoomScreen> {
           ),
         ),
       );
-
-      
     }
   }
 
@@ -67,15 +65,13 @@ class _JoinRoomScreenState extends State<JoinRoomScreen> {
           ElevatedButton(
             onPressed: joinRoom,
             style: ButtonStyle(
-              backgroundColor: const WidgetStatePropertyAll(
-                Colors.blue,
-              ),
-              textStyle: const WidgetStatePropertyAll(
-                TextStyle(
+              backgroundColor: WidgetStateProperty.all(Colors.blue),
+              textStyle: WidgetStateProperty.all(
+                const TextStyle(
                   color: Colors.white,
                 ),
               ),
-              minimumSize: WidgetStatePropertyAll(
+              minimumSize: WidgetStateProperty.all(
                 Size(
                   MediaQuery.of(context).size.width / 2.5,
                   50,
@@ -84,10 +80,7 @@ class _JoinRoomScreenState extends State<JoinRoomScreen> {
             ),
             child: const Text(
               "Join",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-              ),
+              style: TextStyle(color: Colors.white, fontSize: 16),
             ),
           ),
         ],
