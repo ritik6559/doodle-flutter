@@ -196,76 +196,97 @@ class _PaintScreenState extends State<PaintScreen> {
           },
         );
 
-        _socket.on('updateScore', (roomData) {
-          scoreboard.clear();
-          for (int i = 0; i < roomData['players'].length; i++) {
-            setState(() {
-              scoreboard.add({
-                'username': roomData['players'][i]['nickname'],
-                'points': roomData['players'][i]['points'].toString()
+        _socket.on(
+          'updateScore',
+          (roomData) {
+            scoreboard.clear();
+            for (int i = 0; i < roomData['players'].length; i++) {
+              setState(() {
+                scoreboard.add({
+                  'username': roomData['players'][i]['nickname'],
+                  'points': roomData['players'][i]['points'].toString()
+                });
               });
-            });
-          }
-        });
-
-        _socket.on("show-leaderboard", (roomPlayers) {
-          scoreboard.clear();
-          for (int i = 0; i < roomPlayers.length; i++) {
-            setState(() {
-              scoreboard.add({
-                'username': roomPlayers[i]['nickname'],
-                'points': roomPlayers[i]['points'].toString()
-              });
-            });
-            if (maxPoints < int.parse(scoreboard[i]['points'])) {
-              winner = scoreboard[i]['username'];
-              maxPoints = int.parse(scoreboard[i]['points']);
             }
-          }
-          setState(() {
-            _timer.cancel();
-            isShowFinalLeaderboard = true;
-          });
-        });
+          },
+        );
 
-        _socket.on('color-change', (colorString) {
-          int value = int.parse(colorString, radix: 16);
-          Color otherColor = Color(value);
-          setState(() {
-            selectedColor = otherColor;
-          });
-        });
-
-        _socket.on('stroke-width', (value) {
-          setState(() {
-            strokeWidth = value.toDouble();
-          });
-        });
-
-        _socket.on('clear-screen', (data) {
-          setState(() {
-            points.clear();
-          });
-        });
-
-        _socket.on('closeInput', (_) {
-          _socket.emit('updateScore', widget.data['name']);
-          setState(() {
-            isTextInputReadOnly = true;
-          });
-        });
-
-        _socket.on('user-disconnected', (data) {
-          scoreboard.clear();
-          for (int i = 0; i < data['players'].length; i++) {
-            setState(() {
-              scoreboard.add({
-                'username': data['players'][i]['nickname'],
-                'points': data['players'][i]['points'].toString()
+        _socket.on(
+          "show-leaderboard",
+          (roomPlayers) {
+            scoreboard.clear();
+            for (int i = 0; i < roomPlayers.length; i++) {
+              setState(() {
+                scoreboard.add({
+                  'username': roomPlayers[i]['nickname'],
+                  'points': roomPlayers[i]['points'].toString()
+                });
               });
+              if (maxPoints < int.parse(scoreboard[i]['points'])) {
+                winner = scoreboard[i]['username'];
+                maxPoints = int.parse(scoreboard[i]['points']);
+              }
+            }
+            setState(() {
+              _timer.cancel();
+              isShowFinalLeaderboard = true;
             });
-          }
-        });
+          },
+        );
+
+        _socket.on(
+          'color-change',
+          (colorString) {
+            int value = int.parse(colorString, radix: 16);
+            Color otherColor = Color(value);
+            setState(() {
+              selectedColor = otherColor;
+            });
+          },
+        );
+
+        _socket.on(
+          'stroke-width',
+          (value) {
+            setState(() {
+              strokeWidth = value.toDouble();
+            });
+          },
+        );
+
+        _socket.on(
+          'clear-screen',
+          (data) {
+            setState(() {
+              points.clear();
+            });
+          },
+        );
+
+        _socket.on(
+          'closeInput',
+          (_) {
+            _socket.emit('updateScore', widget.data['name']);
+            setState(() {
+              isTextInputReadOnly = true;
+            });
+          },
+        );
+
+        _socket.on(
+          'user-disconnected',
+          (data) {
+            scoreboard.clear();
+            for (int i = 0; i < data['players'].length; i++) {
+              setState(() {
+                scoreboard.add({
+                  'username': data['players'][i]['nickname'],
+                  'points': data['players'][i]['points'].toString()
+                });
+              });
+            }
+          },
+        );
       },
     );
   }

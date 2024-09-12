@@ -12,7 +12,7 @@ const getWord = require('./api/getWord');
 app.use(express.json());
 
 // Connect to our MongoDB
-const DB = "mongodb+srv://ritikjoshi741:9456597017ritik@cluster0.vvntg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const DB = "mongodb+srv://<API_KEY>@cluster0.vvntg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 mongoose.connect(DB).then(() => {
     console.log('Connection Succesful!');
