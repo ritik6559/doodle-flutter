@@ -46,7 +46,6 @@ class _PaintScreenState extends State<PaintScreen> {
   void initState() {
     super.initState();
     connect();
-    print(widget.data['nickname']);
   }
 
   void startTimer() {

@@ -26,9 +26,14 @@ class _CreateRoomScreenState extends State<CreateRoomScreen> {
         "occupancy": _maxRoundsValue!,
         "maxRounds": _roomSizeValue!
       };
-      Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) =>
-              PaintScreen(data: data, screenFrom: 'createRoom')));
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => PaintScreen(
+            data: data,
+            screenFrom: 'createRoom',
+          ),
+        ),
+      );
     }
   }
 
